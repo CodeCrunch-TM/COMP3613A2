@@ -9,6 +9,9 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 from App.database import db, get_migrate
 from App.models import User, Staff, Student, StudentRecord, Accolades, Leaderboard
+import App.controllers.staff as staffController
+import App.controllers.student as studentController
+import App.controllers.studentrecord as studentrecordController
 from App.main import create_app
 from App.controllers import ( create_user, get_all_users_json, get_all_users, initialize )
 
@@ -90,74 +93,60 @@ staff = AppGroup('staff', help='Staff object commands')
 @click.argument("email")
 @click.argument("password")
 @click.argument("department")
-def create_staff_command(name, email, password, department):
-    staff = Staff(name=name, email=email, password=password, department=department)
-    db.session.add(staff)
-    db.session.commit()
-    print(f'Staff member {name} created!')
-
+def create_staff_command(name, email, password, department): #
+    execution = staffController.create_staff(name, email, password, department)
+    print(execution.get("message"))
 
 #list pending records for staff to confirm/reject
 @staff.command("list_pending", help="List all pending student records")
-def list_pending_records():
-    records = StudentRecord.getPendingRecords()
-    if not records:
-        print("No pending records found.")
-    for record in records:
+def list_pending_records_command():
+    execution = staffController.list_pending_records()
+    if "error" in execution:
+        print(execution.get("error"))
+        return
+    for record in execution:
         print(record)
 
 #list all records, mainly for testing purposes but maybe useful as log
 @staff.command("list_all", help="List all student records")
-def list_all_records():
-    records = StudentRecord.getRecords()
-    for record in records:
+def list_all_records(): #
+    records = studentrecordController.get_all_records()
+    if "error" in records:
+        print(records.get("error"))
+        return
+    for record in records: #dumb but should work
         print(record)
-    if not records:
-        print("No records found.")
-        
-        
+
 #staff confirmation, should also update leaderboard hours and standings
 @staff.command("confirm_record", help="Confirm a student record by ID")
 @click.argument("record_id", type=int)
-def confirm_record(record_id):
-    staff = Staff.query.first()  # not sure if to add current user logic since we're just doing cli
-    if not staff:
-        print("Ain't nobody home")
+def confirm_record_command(record_id): #
+    execution = staffController.confirm_record(record_id)
+    if "error" in execution:
+        print(execution.get("error"))
         return
+    print(execution.get("message"))
 
-    record = StudentRecord.query.get(record_id) # confirm that record exists, not misinput
-    if not record:
-        print(f"No record found with ID {record_id}.")
-        return
-    staff.confirmRecord(record_id)
-    leaderboard = Leaderboard()
-    if leaderboard.updateHours(record.studentID, record.hours):
-        db.session.commit()
-    
 #i don't think i really need to explain this one
 @staff.command("reject_record", help="Reject a student record by ID")
 @click.argument("record_id", type=int)
-def reject_record(record_id):
-    staff = Staff.query.first() # once again, i do not know if i should allow this to just be free, but for testing purposes it should be fine
-    if not staff:
-        print("Ain't nobody home")
+def reject_record_command(record_id): #
+    execution = staffController.reject_record(record_id)
+    if "error" in execution:
+        print(execution.get("error"))
         return
-    record = StudentRecord.query.get(record_id) # confirm that record exists, not misinput
-    if not record:
-        print(f"No record found with ID {record_id}.")
-        return
-    staff.rejectRecord(record_id)
+    print(execution.get("message"))
 
-#allows a staff member to give an accolade to a student if eligible and not a dupe    
+#allows a staff member to give an accolade to a student if eligible and not a dupe
 @staff.command("give_award", help="Give an accolade to a student")
 @click.argument("student_id", type=int)
 @click.argument("accolade_tier", type=int)
-def give_award(student_id, accolade_tier):
-    staff = Staff.query.first() # i ain't saying it again
-    if not staff:
-        print("Ain't nobody home")
+def give_award_command(student_id, accolade_tier): #
+    execution = staffController.give_award(student_id, accolade_tier)
+    if "error" in execution:
+        print(execution.get("error"))
         return
-    staff.giveAward(student_id, accolade_tier)
+    print(execution.get("message"))
    
     
 app.cli.add_command(staff)
@@ -172,58 +161,60 @@ student = AppGroup('student', help='Student object commands')
 @click.argument("name")
 @click.argument("email")
 @click.argument("password")
-@click.argument("programme")
-def create_student_command(name, email, password, programme):
-    student = Student(name=name, email=email, password=password, programme=programme)
-    db.session.add(student)
-    db.session.commit()
-    print(f'Student {name} created!')
-
+@click.argument("programme") 
+def create_student_command(name, email, password, programme): #
+    execution = studentController.create_student(name, email, password, programme)
+    # didn't add an error for this, if one is added then it'll go here ~Levi
+    print(execution.get("message"))
+    
 #student command to add a record
 @student.command("add_record", help="Add a student record")
 @click.argument("student_id", type=int)
 @click.argument("hours", type=float)
-def add_student_record(student_id, hours):
-    student = Student.query.get(student_id)
-    if not student:
-        print(f"No student found with ID {student_id}.")
+def add_student_record_command(student_id, hours): #
+    execution = studentController.add_record(student_id, hours)
+    if "error" in execution:
+        print(execution.get("error"))
         return
-    student.createRecord(hours, datetime.now().date()) #using current date for simplicity
+    print(execution.get("message"))
+ 
  
 #student command to view leaderboard, also how students get their total hours viewed, might add a filtered version for only one student later   
 @student.command("leaderboard", help="View the leaderboard")
 @click.argument("num_students", type=int, default=3)
-def view_leaderboard(num_students):
-    leaderboard = Leaderboard.getPodium(num_students)
+def view_leaderboard_command(num_students): #
+    leaderboard = studentController.view_leaderboard(num_students)
     if not leaderboard:
         print("No entries in the leaderboard.")
         return
-    
     print(f"Top {num_students} Students in the Leaderboard:")
-    for student in leaderboard:
-        print(f"Position: {student['position']}, StudentID: {student['studentID']}, TotalHours: {student['totalHours']}")
-        
+    for entry in leaderboard:
+        print(f"Position: {entry['position']}, StudentID: {entry['studentID']}, TotalHours: {entry['totalHours']}")
+    
+    
 #student command to find their position, because there's no current user logic, this will require manual user input of student ID 
 @student.command("my_position", help="View your leaderboard position")
 @click.argument("student_id", type=int)
-def view_my_position(student_id):
-    leaderboard = Leaderboard()
-    position = leaderboard.findStudentPosition(student_id)
-    if not position:
-        print(f"No leaderboard entry found for student ID {student_id}.")
+def view_my_position_command(student_id): #
+    execution = studentController.view_my_position(student_id)
+    if "error" in execution:
+        print(execution.get("error"))
         return
-    print(f"Your Position: {position['position'] + 1}, Total Hours: {position['totalHours']}")
+    print(execution.get("message"))
+    
         
 #allows a student to view their accolades, same logic as above     
 @student.command("my_accolades", help="View your accolades")
 @click.argument("student_id", type=int)
-def view_my_accolades(student_id):
-    student = Student.query.get(student_id)
-    if not student:
-        print(f"No student found with ID {student_id}.")
+def get_my_accolades_command(student_id): #
+    accolades = studentController.get_my_accolades(student_id)
+    if "error" in accolades:
+        print(accolades.get("error"))
         return
-    accolades = student.getAccolades()
-    for accolade in accolades:
-        print(f"Accolade ID: {accolade.accoladeID}, Tier: {accolade.accoladeTier}, Awarded By: {accolade.awardedBy}")
+    else:
+        print(f"Accolades for Student ID {student_id}:")
+        for accolade in accolades:
+            print(f"Accolade ID: {accolade['accoladeID']}, Tier: {accolade['accoladeTier']}, Awarded By: {accolade['awardedBy']}")
+        
         
 app.cli.add_command(student)
