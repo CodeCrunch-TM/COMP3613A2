@@ -37,4 +37,4 @@ def get_my_accolades(student_id):
     if not accolades:
         return {"error": "No accolades found."}
     else:
-        return [accolade for accolade in accolades]
+        return [accolade.to_json() for accolade in accolades]
