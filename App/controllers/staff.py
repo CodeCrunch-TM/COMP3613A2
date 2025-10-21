@@ -1,4 +1,4 @@
-from models import Staff, StudentRecord, Leaderboard
+from App.models import Staff, StudentRecord, Leaderboard
 from App.database import db
 
 def create_staff(name, email, password, department):

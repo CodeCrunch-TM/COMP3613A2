@@ -1,4 +1,4 @@
-from models import Student, Leaderboard
+from App.models import Student, Leaderboard
 from App.database import db
 from datetime import datetime
 

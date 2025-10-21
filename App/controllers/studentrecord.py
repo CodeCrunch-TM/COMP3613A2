@@ -1,4 +1,4 @@
-from models import StudentRecord
+from App.models import StudentRecord
 from App.database import db
 
 def get_all_records():
