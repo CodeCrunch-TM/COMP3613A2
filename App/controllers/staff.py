@@ -27,8 +27,11 @@ def confirm_record(record_id):
     
     staff.confirmRecord(record_id)
     leaderboard = Leaderboard()
-    if leaderboard.updateHours(record.studentID, record.hours):
-        db.session.commit()
+    # if leaderboard.updateHours(record.studentID, record.hours):
+    #     db.session.commit()
+    # looking at it, my updateHours function already commits, so this was basically just a double commit, didn't break anything but not needed.
+    # IF CONFIRM BREAKS, READ ^^^
+    leaderboard.updateHours(record.studentID, record.hours)
     return {"message": f"Record ID {record_id} has been confirmed."}
         
 def reject_record(record_id):

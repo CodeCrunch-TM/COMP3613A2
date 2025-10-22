@@ -14,7 +14,7 @@ class Leaderboard(db.Model):
     
     @staticmethod
     def recalculatePositions():
-        print("Recalculating leaderboard positions...")
+        # print("Recalculating leaderboard positions...") # pretty much exclusively debug, just to see that it triggers.
         entries = Leaderboard.query.order_by(Leaderboard.totalHours.desc()).all() #grabs all entries
         for pos, entry in enumerate(entries, start=1): #for loop location swap - enumerate gives index and value
             entry.position = pos
@@ -53,16 +53,16 @@ class Leaderboard(db.Model):
         if entry:
             entry.totalHours += additionalHours
             Leaderboard.recalculatePositions()
-            print(f"Updated hours for student {studentID} to {entry.totalHours}")
+            # print(f"Updated hours for student {studentID} to {entry.totalHours}") # debugging stuff
             db.session.commit()
-            return entry
+            return {"update" : f"Updated hours for student {studentID} to {entry.totalHours}"}
         elif not entry: #I FORGOT TO ADD IF IT DIDN'T EXIST I JUST SPENT AN HOUR DEBUGGING AND COULDN'T FIND ITTTTTTTTT
             new_entry = Leaderboard(studentID=studentID, totalHours=additionalHours, position=0) #position is placeholder
             db.session.add(new_entry)
             db.session.commit()
             Leaderboard.recalculatePositions() # position doesn't matter cause will recalc anyways
-            print(f"Created new leaderboard entry for student {studentID} with {additionalHours} hours")
-            return new_entry
+            # print(f"Created new leaderboard entry for student {studentID} with {additionalHours} hours")
+            return {"update" : f"Created new leaderboard entry for student {studentID} with {additionalHours} hours"} # added update messages incase i wanna use them later
         #every time staff confirms a record, it should call this
         
     

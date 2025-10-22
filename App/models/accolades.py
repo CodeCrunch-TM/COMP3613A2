@@ -28,7 +28,7 @@ class Accolades(db.Model):
         tier_requirements = {1: 10, 2: 25, 3: 50}
         required_hours = tier_requirements.get(accoladeTier, float('inf')) #python has positive infinity as 'inf'
         
-        return entry.totalHours >= required_hours #inf is failsafe for anything not declared in dict, should be brute force safe -- havent' tested fully
+        return entry.totalHours >= required_hours #inf is failsafe for anything not declared in dict, should be brute force safe -- haven't tested fully
     
     # def getAccolades(self, studentID):
     #     return Accolades.query.filter_by(studentID=studentID).all()
