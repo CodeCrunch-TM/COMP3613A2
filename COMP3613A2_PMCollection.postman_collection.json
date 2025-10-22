@@ -1,0 +1,575 @@
+{
+	"info": {
+		"_postman_id": "eb629b46-5d7b-42ba-9dc6-de8a3364ff87",
+		"name": "COMP3613A2_PMCollection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41769175"
+	},
+	"item": [
+		{
+			"name": "Home",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status test\", function () {\r",
+							"\tpm.response.to.not.be.error;\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}",
+					"host": [
+						"{{host}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Initialize",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Initialize test\", function () {\r",
+							"\tpm.response.to.not.be.error;\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/init",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"init"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Staff Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Staff created successfully\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.not.be.null;",
+							"    ",
+							"    if (jsonData.id) {",
+							"        pm.collectionVariables.set('staff_id', jsonData.id);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"BobStaffer\",\n    \"email\": \"bobthestaffer@uwi.edu\",\n    \"password\": \"bobpass\",\n    \"department\": \"DCIT\"\n}"
+				},
+				"url": {
+					"raw": "{{host}}/api/staff",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"staff"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Create",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Student created successfully\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.not.be.null;",
+							"    ",
+							"    // Store student_id if present in response",
+							"    if (jsonData.id) {",
+							"        pm.collectionVariables.set('student_id', jsonData.id);",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"JohnDoe\",\n    \"email\": \"johnDoe@my.uwi.edu\",\n    \"password\": \"johnpass\",\n    \"programme\": \"Computer Science\"\n}"
+				},
+				"url": {
+					"raw": "{{host}}/api/student",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"student"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Add Record",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Record added successfully\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"student_id\": 2,\n    \"hours\": 20\n}"
+				},
+				"url": {
+					"raw": "{{host}}/api/student/add_record",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"student",
+						"add_record"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Staff List All Records",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/staff/list_all",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"staff",
+						"list_all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Staff List Pending Records",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Response is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/staff/list_pending",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"staff",
+						"list_pending"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Staff Confirm Record",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Record confirmed\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/staff/confirm/1",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"staff",
+						"confirm",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Add Record Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Record added successfully\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"student_id\": 2,\n    \"hours\": 20\n}"
+				},
+				"url": {
+					"raw": "{{host}}/api/student/add_record",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"student",
+						"add_record"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Staff Reject Record",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Record rejected\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/staff/reject/2",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"staff",
+						"reject",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Staff Give Award",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Award given successfully\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"student_id\": 2,\n    \"accolade_tier\": 1\n}"
+				},
+				"url": {
+					"raw": "{{host}}/api/staff/give_award",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"staff",
+						"give_award"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Leaderboard",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Leaderboard is an array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an('array');\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/student/leaderboard",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"student",
+						"leaderboard"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student Position",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Position data returned\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.null;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/student/my_position/{{student_id}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"student",
+						"my_position",
+						"{{student_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student View Accolades",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{host}}/api/student/my_accolades/{{student_id}}",
+					"host": [
+						"{{host}}"
+					],
+					"path": [
+						"api",
+						"student",
+						"my_accolades",
+						"{{student_id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
