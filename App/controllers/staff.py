@@ -12,7 +12,8 @@ def list_pending_records():
     if not records:
         return {"error": "No pending records found."}
     else:
-        return [dict(record) for record in records]
+        return(StudentRecord.getRecords())
+        #return [dict(record) for record in records]
                         
 def confirm_record(record_id):
     staff = Staff.query.first()  # not sure if to add current user logic since we're just doing cli
