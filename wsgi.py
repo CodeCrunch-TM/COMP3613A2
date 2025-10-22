@@ -172,7 +172,7 @@ def create_student_command(name, email, password, programme): #
 @click.argument("student_id", type=int)
 @click.argument("hours", type=float)
 def add_student_record_command(student_id, hours): #
-    execution = studentController.add_record(student_id, hours)
+    execution = studentController.add_student_record(student_id, hours)
     if "error" in execution:
         print(execution.get("error"))
         return
@@ -184,8 +184,8 @@ def add_student_record_command(student_id, hours): #
 @click.argument("num_students", type=int, default=3)
 def view_leaderboard_command(num_students): #
     leaderboard = studentController.view_leaderboard(num_students)
-    if not leaderboard:
-        print("No entries in the leaderboard.")
+    if "error" in leaderboard:
+        print(leaderboard.get("error"))
         return
     print(f"Top {num_students} Students in the Leaderboard:")
     for entry in leaderboard:

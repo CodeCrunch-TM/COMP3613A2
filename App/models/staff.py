@@ -55,13 +55,10 @@ class Staff(User):
 
     def giveAward(self, studentID, accoladeTier):
         if Accolades().isDupe(studentID, accoladeTier):
-            print(f"Duplicate accolade for student {studentID} at tier {accoladeTier}")
-            return None
+            return {"error": f"Duplicate accolade for student {studentID} at tier {accoladeTier}"} # passing forward
         elif not Accolades().isEligible(studentID, accoladeTier):
-            print(f"Student {studentID} not eligible for accolade tier {accoladeTier}")
-            return None
+            return {"error" : f"Student {studentID} not eligible for accolade tier {accoladeTier}"} # same here
         accolade = Accolades(studentID=studentID, accoladeTier=accoladeTier, awardedBy=self.id)
         db.session.add(accolade)
         db.session.commit()
-        print(f"Accolade tier {accoladeTier} awarded to student {studentID} by staff {self.id}")
         return accolade

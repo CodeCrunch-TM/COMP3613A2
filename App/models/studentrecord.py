@@ -31,7 +31,15 @@ class StudentRecord(db.Model):
     
     @staticmethod
     def getRecords():
-        return StudentRecord.query.all()
+        records = StudentRecord.query.all()
+        return [{
+            "recordID": records.recordID,
+            "studentID": records.studentID,
+            "staffID": records.staffID,
+            "datePerformed": records.datePerformed,
+            "hours": records.hours,
+            "status": records.status
+        } for records in records] # this also broke, so doing manual dict construction again, look up optimal way later
         
     @staticmethod
     def getPendingRecords():

@@ -23,7 +23,6 @@ class Student(User):
         record = StudentRecord(studentID=self.id, hours=hours, datePerformed=date, status='Pending')
         db.session.add(record)
         db.session.commit()
-        print(f"Record {record.recordID} created for {self.name}")
         return record
     
     def getLeaderboardPosition(self):
@@ -37,5 +36,12 @@ class Student(User):
     # also test this
     
     def getAccolades(self):
-        return self.accolades
-    # test for formatting, etc
+        return [{
+                "accoladeID": accolade.accoladeID,
+                "studentID": accolade.studentID,
+                "accoladeTier": accolade.accoladeTier,
+                "awardedBy": accolade.awardedBy
+                } for accolade in self.accolades]
+    # trying conversion here since it was breaking in controller, also manually structuring dict
+    # fixed it, was sending the direct SQLAlchemy objects back which can't be serialized directly, so instead we send over a list of dicts that represent the accolades, and can just filter directly if needed instead of
+    # at the function itself

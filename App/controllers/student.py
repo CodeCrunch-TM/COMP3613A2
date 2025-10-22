@@ -1,4 +1,4 @@
-from models import Student, Leaderboard
+from App.models import Student, Leaderboard
 from App.database import db
 from datetime import datetime
 
@@ -19,7 +19,7 @@ def view_leaderboard(num_students):
     leaderboard = Leaderboard.getPodium(num_students)
     if not leaderboard:
         return {"error": "No entries in the leaderboard."}
-    return [student.to_json() for student in leaderboard]
+    return [dict(student) for student in leaderboard]
         #print(f"Position: {student['position']}, StudentID: {student['studentID']}, TotalHours: {student['totalHours']}")
         
 def view_my_position(student_id):
@@ -27,7 +27,7 @@ def view_my_position(student_id):
     position = leaderboard.findStudentPosition(student_id)
     if not position:
         return {"error": "No leaderboard entry found."}
-    return {"message": f"Your Position: {position['position'] + 1}, Total Hours: {position['totalHours']}"}
+    return {"message": f"Your Position: {position['position']}, Total Hours: {position['totalHours']}"}
     
 def get_my_accolades(student_id):
     student = Student.query.get(student_id)
@@ -36,5 +36,4 @@ def get_my_accolades(student_id):
     accolades = student.getAccolades()
     if not accolades:
         return {"error": "No accolades found."}
-    else:
-        return [accolade.to_json() for accolade in accolades]
+    return accolades
