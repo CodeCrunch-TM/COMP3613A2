@@ -71,11 +71,12 @@ test = AppGroup('test', help='Testing commands')
 @test.command("user", help="Run User tests")
 @click.argument("type", default="all")
 def user_tests_command(type):
+    '''
     if type == "unit":
         sys.exit(pytest.main(["-k", "UserUnitTests"]))
     elif type == "int":
-        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
-    elif type == "student":
+        sys.exit(pytest.main(["-k", "UserIntegrationTests"]))'''
+    if type == "student":
         sys.exit(pytest.main(["-k", "StudentUnitTests"]))
     elif type == "staff":
         sys.exit(pytest.main(["-k", "StaffUnitTests"]))
