@@ -75,6 +75,14 @@ def user_tests_command(type):
         sys.exit(pytest.main(["-k", "UserUnitTests"]))
     elif type == "int":
         sys.exit(pytest.main(["-k", "UserIntegrationTests"]))
+    elif type == "student":
+        sys.exit(pytest.main(["-k", "StudentUnitTests"]))
+    elif type == "staff":
+        sys.exit(pytest.main(["-k", "StaffUnitTests"]))
+    elif type == "record":
+        sys.exit(pytest.main(["-k", "StudentRecordUnitTests"]))
+    elif type == "accolade":
+        sys.exit(pytest.main(["-k", "AccoladeUnitTests"]))
     else:
         sys.exit(pytest.main(["-k", "App"]))
     
