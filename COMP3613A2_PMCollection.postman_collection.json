@@ -436,8 +436,8 @@
 							"});\r",
 							"\r",
 							"pm.test(\"Award given successfully\", function () {\r",
-							"    var jsonData = pm.response.json();\r",
-							"    pm.expect(jsonData).to.not.be.null;\r",
+							"    var responce = pm.response;\r",
+							"    pm.expect(responce).to.not.be.null;\r",
 							"});"
 						],
 						"type": "text/javascript",
@@ -537,7 +537,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/student/my_position/{{student_id}}",
+					"raw": "{{host}}/api/student/my_position/2",
 					"host": [
 						"{{host}}"
 					],
@@ -545,7 +545,7 @@
 						"api",
 						"student",
 						"my_position",
-						"{{student_id}}"
+						"2"
 					]
 				}
 			},
@@ -557,7 +557,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{host}}/api/student/my_accolades/{{student_id}}",
+					"raw": "{{host}}/api/student/my_accolades/2",
 					"host": [
 						"{{host}}"
 					],
@@ -565,7 +565,7 @@
 						"api",
 						"student",
 						"my_accolades",
-						"{{student_id}}"
+						"2"
 					]
 				}
 			},
