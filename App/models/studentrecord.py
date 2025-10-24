@@ -43,5 +43,12 @@ class StudentRecord(db.Model):
         
     @staticmethod
     def getPendingRecords():
-        return StudentRecord.query.filter_by(status='Pending').all()
-        
+        records = StudentRecord.query.filter_by(status='Pending').all()
+        return [{
+            "recordID": records.recordID,
+            "studentID": records.studentID,
+            "staffID": records.staffID,
+            "datePerformed": records.datePerformed,
+            "hours": records.hours,
+            "status": records.status
+        } for records in records]

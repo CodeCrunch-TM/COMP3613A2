@@ -1,4 +1,4 @@
-from App.models import Staff, StudentRecord, Leaderboard
+from App.models import Staff, StudentRecord, Leaderboard, Student
 from App.database import db
 
 def create_staff(name, email, password, department):
@@ -12,7 +12,7 @@ def list_pending_records():
     if not records:
         return {"error": "No pending records found."}
     else:
-        return [dict(record) for record in records]
+        return records
                         
 def confirm_record(record_id):
     staff = Staff.query.first()  # not sure if to add current user logic since we're just doing cli
@@ -50,7 +50,11 @@ def give_award(student_id, accolade_tier):
     staff = Staff.query.first() # i ain't saying it again
     if not staff:
         return {"error": "No staff member found."}
+    student = Student.query.get(student_id)
+    if not student:
+        return {"error" : f"No student found with ID {student_id}"}
     award = staff.giveAward(student_id, accolade_tier)
     if "error" in award: #  receive any errors from model and pass it to wsgi
         return award
+    # Specifically not moving all error checks to a single file, so i can look back on this as ways to pass errors forward through files.
     return {"message": f"Accolade of tier {accolade_tier} given to student ID {student_id}."}

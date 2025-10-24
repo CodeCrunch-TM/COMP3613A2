@@ -13,7 +13,7 @@ class Accolades(db.Model):
     staff = db.relationship('Staff', backref=db.backref('accolades', lazy=True))
 
     def __repr__(self):
-        return f"<Accolades ID: {self.accoladeID}, StudentID: {self.studentID}, AccoladeTier: {self.accoladeTier}, AwardedBy: {self.awardedBy}>"
+        return f"<AccoladeID: {self.accoladeID}, StudentID: {self.studentID}, AccoladeTier: {self.accoladeTier}, AwardedBy: {self.awardedBy}>"
     
     def isDupe(self, studentID, accoladeTier):
         existing = Accolades.query.filter_by(studentID=studentID, accoladeTier=accoladeTier).first()

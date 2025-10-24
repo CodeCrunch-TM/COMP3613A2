@@ -21,15 +21,15 @@ class Staff(User):
     def __repr__(self):
         return f"<Staff ID: {self.id}, Name: {self.name}, Email: {self.email}, Department: {self.department}>"
 
-    def getPendingRecords(self):
-        return [record for record in self.student_records if record.status == 'Pending']
+    # def getPendingRecords(self):
+    #     return [record for record in self.student_records if record.status == 'Pending']
     #autocompleted logic, unsure if works
     
     def confirmRecord(self, recordID):
         record = StudentRecord.query.filter_by(recordID=recordID).first()
-        if record is None:
-            print(f"No record found with ID {record.recordID}.")
-            return False
+        # if record is None:
+        #     print(f"No record found with ID {record.recordID}.")
+        #     return False
         if record.isPending():
             record.setStatus('Confirmed')
             record.signRecord(self.id)
