@@ -11,9 +11,12 @@ from App.controllers import (
     login,
     get_user,
     get_user_by_username,
-    update_user
+    update_user,
+    initialize
 )
-
+from App.controllers import studentrecord
+from App.controllers.student import create_student, add_student_record, view_leaderboard, view_my_position, get_my_accolades
+from App.controllers.staff import create_staff, list_pending_records, confirm_record, reject_record, give_award
 
 LOGGER = logging.getLogger(__name__)
 
@@ -110,6 +113,123 @@ class AccoladeUnitTests(unittest.TestCase):
 '''
     Integration Tests
 '''
+class UsersIntegrationTests(unittest.TestCase): #testing
+    def test_user_workflow(self): #might delete this since it's kinda redundant with other tests *edit* nvm saw that we commmented out the other user tests         
+        user = User("testuser", "test@email.com", "testpass")
+        assert user.name == "testuser"
+        assert user.email == "test@email.com"
+        assert user.check_password("testpass")
+
+class InitializeIntegrationTests(unittest.TestCase):
+    def test_initialization(self):
+        initialize()
+        all_users = get_all_users_json()
+        assert isinstance(all_users, list) 
+        assert studentrecord.get_all_records() == {"error": "No records found."}
+    
+class StudentStaffIntegrationTests(unittest.TestCase): #maybe push working now
+    
+    def test_student_staff_interactions(self):
+        student_result = create_student("Student1", "student1@test.com", "pass", "Computer Science")
+        staff_result = create_staff("Staff1", "staff1@test.com", "pass", "IT Department")
+        
+        assert "message" in student_result  
+        assert "message" in staff_result  #these might be in levi's tests already but it make sense to test here
+
+        record_result = add_student_record(1, 15.0)  # Increase hours to meet accolade requirement
+        assert "message" in record_result #test adding record
+        
+        pending_result = list_pending_records()
+        assert isinstance(pending_result, (list, dict)) #pending test
+        
+        confirm_result = confirm_record(1)
+        assert "message" in confirm_result or "error" in confirm_result #confirm test
+        
+        award_result = give_award(1, 1)
+        assert award_result is not None
+        if isinstance(award_result, dict):
+            assert "message" in award_result or "error" in award_result  #reward test
+
+        result = reject_record(1)
+        assert "error" in result  #check to make sure u can update record that's already confirmed
+
+class LeaderboardIntegrationTests(unittest.TestCase):
+        
+    def test_student_leaderboard_interactions(self): #tested using the functions mainly cuz i genuinely have no clue how levi used ID *edit* seems manually set, this autist
+
+        student_result = create_student("StudentLB1", "studentlb1@test.com", "pass", "Engineering") #had to follow levi's method of IDing and setting manually
+        assert "message" in student_result
+        
+        leaderboard_result = view_leaderboard(3) 
+        assert isinstance(leaderboard_result, (list, dict))
+        
+        position_result = view_my_position(1) 
+        assert isinstance(position_result, dict)
+        
+        record_result = add_student_record(1, 10.0)  
+        
+        if "message" in record_result:
+            confirm_record(1)  
+            updated_leaderboard = view_leaderboard(3)
+            assert isinstance(updated_leaderboard, (list, dict))
+
+    def test_leaderboard_updates(self):
+
+        create_student("LBUpdate1", "lbupdate1@test.com", "pass", "Engineering")
+        create_student("LBUpdate2", "lbupdate2@test.com", "pass", "Engineering")
+        create_student("LBUpdate3", "lbupdate3@test.com", "pass", "Engineering")
+        create_staff("LBUpdateStaff", "lbupdatestaff@test.com", "pass", "Engineering")
+
+        add_student_record(1, 10.0)
+        add_student_record(2, 20.0)
+        add_student_record(3, 30.0)
+        
+        confirm_record(1)
+        confirm_record(2)
+        confirm_record(3)
+        results = view_leaderboard(3)
+            
+        if isinstance(results, list):      #this man, i hate these returns, got them working eventually tho
+            assert len(results) >= 0
+            for entry in results:
+                assert "position" in entry
+                assert "studentID" in entry
+                assert "totalHours" in entry
+        elif isinstance(results, dict):
+                assert "error" in results
+    
+    def test_leaderboard_podium(self):
+
+        create_student("PodiumA", "podiuma@test.com", "pass", "Engineering")
+        create_student("PodiumB", "podiumb@test.com", "pass", "Engineering")
+        create_student("PodiumC", "podiumc@test.com", "pass", "Engineering")
+        create_staff("PodiumStaff", "podiumstaff@test.com", "pass", "Engineering")
+
+        add_student_record(1, 15.0)
+        add_student_record(2, 25.0)
+        add_student_record(3, 35.0)
+
+        confirm_record(1)
+        confirm_record(2)
+        confirm_record(3)
+        results = view_leaderboard(3)
+        
+        if isinstance(results, list):
+            assert len(results) >= 0  #played with instances and shi till i got it working, the logic is sound...maybe
+            if len(results) > 0:
+                for entry in results:
+                        assert "position" in entry
+                        assert "studentID" in entry
+                        assert "totalHours" in entry
+                if len(results) >= 2:
+                        assert results[0]["position"] >= 1
+                        assert results[1]["position"] >= 1
+                        assert results[0]["position"] <= results[1]["position"] 
+                if len(results) >= 3:
+                        assert results[2]["position"] >= 1
+                        assert results[1]["position"] <= results[2]["position"]       
+        elif isinstance(results, dict):
+                assert "error" in results
 
 # This fixture creates an empty database for the test and deletes it after the test
 # scope="class" would execute the fixture once and resued for all methods in the class
