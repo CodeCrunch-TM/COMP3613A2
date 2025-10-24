@@ -54,7 +54,7 @@ def give_award(student_id, accolade_tier):
     if not student:
         return {"error" : f"No student found with ID {student_id}"}
     award = staff.giveAward(student_id, accolade_tier)
-    if "error" in award: #  receive any errors from model and pass it to wsgi
+    if isinstance(award, dict) and "error" in award: #  receive any errors from model and pass it to wsgi
         return award
     # Specifically not moving all error checks to a single file, so i can look back on this as ways to pass errors forward through files.
     return {"message": f"Accolade of tier {accolade_tier} given to student ID {student_id}."}
